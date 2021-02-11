@@ -1,0 +1,42 @@
+.idea/*
+docker/.data
+docker/key
+/docker/logs
+.docker-sync/*
+node_modules/*
+/public/uploads/images/*
+/public/uploads/files/*
+/yarn-error.log
+!/public/assets/fonts
+config/jwt/*
+!config/jwt/test
+
+##> symfony/framework-bundle ###
+.env
+/public/bundles/
+/public/assets/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+
+
+###> symfony/phpunit-bridge ###
+.phpunit
+/phpunit.xml
+###< symfony/phpunit-bridge ###
+
+
+###> lexik/jwt-authentication-bundle ###
+/config/jwt/*.pem
+###< lexik/jwt-authentication-bundle ###
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
