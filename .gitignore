@@ -10,16 +10,17 @@ node_modules/*
 !/public/assets/fonts
 config/jwt/*
 !config/jwt/test
+service-account/*
+service-account
 
 ##> symfony/framework-bundle ###
 .env
 /public/bundles/
 /public/assets/
+/public/audio/
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
-
-
 
 ###> symfony/phpunit-bridge ###
 .phpunit
@@ -36,7 +37,4 @@ config/jwt/*
 /.env.local.php
 /.env.*.local
 /config/secrets/prod/prod.decrypt.private.php
-/public/bundles/
-/var/
-/vendor/
 ###< symfony/framework-bundle ###

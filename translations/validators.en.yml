@@ -1,0 +1,5 @@
+api:
+  error:
+    audio_file:
+      mime_type_not_valid: 'Audio file is not valid. Allowed types are: WAV, MP3, FLAC'
+      too_large: 'Audio file is too large. Allowed max size is 1 GB'

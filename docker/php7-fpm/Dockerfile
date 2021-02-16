@@ -47,6 +47,25 @@ RUN apt-get -y update
 RUN apt-get -y upgrade
 RUN apt-get install -y ffmpeg
 
+
+RUN apt-get update && apt-get install -y -q git rake ruby-ronn zlib1g-dev && apt-get clean
+
+RUN pecl install grpc
+
+#install protoc
+RUN mkdir -p /tmp/protoc && \
+    curl -L https://github.com/google/protobuf/releases/download/v3.2.0/protoc-3.2.0-linux-x86_64.zip > /tmp/protoc/protoc.zip && \
+    cd /tmp/protoc && \
+    unzip protoc.zip && \
+    cp /tmp/protoc/bin/protoc /usr/local/bin && \
+    cd /tmp && \
+    rm -r /tmp/protoc && \
+    docker-php-ext-enable grpc
+
+RUN docker-php-ext-install bcmath
+
+COPY php.ini /usr/local/etc/php/
+
 RUN echo 'alias sf="php bin/console"' >> ~/.bashrc
 
 RUN set -xe && \

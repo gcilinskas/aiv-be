@@ -10,6 +10,12 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $audioDir: '%kernel.project_dir%/public/audio/'
+            $serviceAccountDir: '%kernel.project_dir%/service-account/'
+            $tempUploadDir: '%kernel.cache_dir%/temp_uploads'
+            $aivBucket: 'audioinvision'
+            $googleCloudStorageUrl: 'https://storage.cloud.google.com/'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

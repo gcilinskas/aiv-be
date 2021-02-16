@@ -2,15 +2,22 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\TimeEntityTrait;
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  */
 class User implements UserInterface
 {
+    use TimeEntityTrait;
+
+    const ROLE_USER = 'ROLE_USER';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -29,10 +36,24 @@ class User implements UserInterface
     private $roles = [];
 
     /**
+     * @var string
+     */
+    private $role;
+
+    /**
      * @var string The hashed password
      * @ORM\Column(type="string")
      */
     private $password;
+
+    /**
+     * User constructor.
+     */
+    public function __construct()
+    {
+        $this->createdAt = new DateTime();
+        $this->updatedAt = new DateTime();
+    }
 
     public function getId(): ?int
     {
@@ -113,5 +134,29 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRole(): ?string
+    {
+        if (!$this->role) {
+            return self::ROLE_USER;
+        }
+
+        return $this->role;
+    }
+
+    /**
+     * @param string $role
+     *
+     * @return User
+     */
+    public function setRole(string $role): User
+    {
+        $this->role = $role;
+
+        return $this;
     }
 }
