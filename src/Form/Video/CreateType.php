@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Form\Track;
+
+namespace App\Form\Video;
 
 use App\Service\FileService;
 use Symfony\Component\Form\AbstractType;
@@ -41,10 +42,10 @@ class CreateType extends AbstractType
             'constraints' => [
                 new File(
                     [
-                        'mimeTypes' => ['audio/mpeg',  'audio/wav', 'audio/flac'],
-                        'mimeTypesMessage' => 'api.error.audio_file.mime_type_not_valid',
-                        'maxSize' => '1000M',
-                        'maxSizeMessage' => 'api.error.audio_file.too_large',
+                        'mimeTypes' => ['video/mp4'],
+                        'mimeTypesMessage' => 'api.error.video_file.mime_type_not_valid',
+                        'maxSize' => '10000M',
+                        'maxSizeMessage' => 'api.error.video_file.too_large',
                     ]
                 )
             ]

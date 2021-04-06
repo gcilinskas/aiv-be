@@ -4,10 +4,12 @@ namespace App\Controller\Api;
 
 use App\Controller\ApiResponseController;
 use App\Entity\Track;
+use App\Factory\FileFactory;
 use App\Response\ApiResponse;
+use App\Service\AwsService;
 use App\Service\GoogleCloudService;
+use App\Service\S3Service;
 use App\Service\WordService;
-use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -28,15 +30,36 @@ class WordController extends ApiResponseController
     private $googleCloudService;
 
     /**
+     * @var S3Service
+     */
+    private $s3Service;
+
+    /**
+     * @var AwsService
+     */
+    private $awsService;
+
+    /**
+     * @var FileFactory
+     */
+    private $fileFactory;
+
+    /**
      * LyricsController constructor.
      *
      * @param GoogleCloudService $googleCloudService
      * @param WordService        $wordService
+     * @param S3Service          $s3Service
+     * @param AwsService         $awsService
+     * @param FileFactory        $fileFactory
      */
-    public function __construct(GoogleCloudService $googleCloudService, WordService $wordService)
+    public function __construct(GoogleCloudService $googleCloudService, WordService $wordService, S3Service $s3Service, AwsService $awsService, FileFactory $fileFactory)
     {
         $this->googleCloudService = $googleCloudService;
         $this->wordService = $wordService;
+        $this->s3Service = $s3Service;
+        $this->awsService = $awsService;
+        $this->fileFactory = $fileFactory;
     }
 
     /**
@@ -49,13 +72,13 @@ class WordController extends ApiResponseController
     {
         // TODO Voter
 
-        try {
-            $track = $this->googleCloudService->extractWordsFromTrack($track);
-        } catch (Exception $exception){
-            return $this->apiFailedResponse($exception->getMessage(), 'Failed to add words');
-        }
+//        try {
+//            $track = $this->googleCloudService->extractWordsFromTrack($track);
+//        } catch (Exception $exception){
+//            return $this->apiFailedResponse($exception->getMessage(), 'Failed to add words');
+//        }
 
-        return $this->apiSuccessResponse(ApiResponse::format($track->getWords()), ['api_word']);
+//        return $this->apiSuccessResponse(ApiResponse::format(), ['api_word']);
     }
 
     /**
@@ -68,6 +91,8 @@ class WordController extends ApiResponseController
     {
         // TODO Voter
 
-        return $this->wordService->getBy(['track' => $track]);
+        $words = $this->wordService->getBy(['track' => $track]);
+
+        return $this->apiSuccessResponse(ApiResponse::format($words), ['api_word']);
     }
 }

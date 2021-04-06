@@ -7,6 +7,7 @@ use App\Repository\FileRepository;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use \Symfony\Component\HttpFoundation\File\File as HttpFile;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=FileRepository::class)
@@ -15,20 +16,28 @@ class File
 {
     use TimeEntityTrait;
 
+    const TYPE_AUDIO = 'TYPE_AUDIO';
+    const TYPE_VIDEO = 'TYPE_VIDEO';
+    const TYPE_TRANSCRIPTION = 'TYPE_TRANSCRIPTION';
+    const TYPE_VOCABULARY = 'TYPE_VOCABULARY';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("api_track")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("api_track")
      */
     private $filename;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("api_track")
      */
     private $url;
 
@@ -53,7 +62,8 @@ class File
     private $file;
 
     /**
-     * @ORM\OneToOne(targetEntity=Track::class, inversedBy="file", cascade={"persist", "remove"})
+     * @var Track|null
+     * @ORM\ManyToOne(targetEntity=Track::class, inversedBy="file")
      */
     private $track;
 
@@ -61,6 +71,36 @@ class File
      * @var string|null
      */
     private $tmpPath;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $awsKey;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $extension;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $type;
+
+    /**
+     * @var string|null
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $jobName;
+
+    /**
+     * @var Video|null
+     * @ORM\ManyToOne(targetEntity=Video::class, inversedBy="files")
+     */
+    private $video;
 
     /**
      * File constructor.
@@ -238,6 +278,106 @@ class File
     public function setTmpPath(?string $tmpPath): File
     {
         $this->tmpPath = $tmpPath;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getAwsKey(): ?string
+    {
+        return $this->awsKey;
+    }
+
+    /**
+     * @param string|null $awsKey
+     *
+     * @return File
+     */
+    public function setAwsKey(?string $awsKey): File
+    {
+        $this->awsKey = $awsKey;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getExtension(): ?string
+    {
+        return $this->extension;
+    }
+
+    /**
+     * @param string|null $extension
+     *
+     * @return File
+     */
+    public function setExtension(?string $extension): File
+    {
+        $this->extension = $extension;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string|null $type
+     *
+     * @return File
+     */
+    public function setType(?string $type): File
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getJobName(): ?string
+    {
+        return $this->jobName;
+    }
+
+    /**
+     * @param string|null $jobName
+     *
+     * @return File
+     */
+    public function setJobName(?string $jobName): File
+    {
+        $this->jobName = $jobName;
+
+        return $this;
+    }
+
+    /**
+     * @return Video|null
+     */
+    public function getVideo(): ?Video
+    {
+        return $this->video;
+    }
+
+    /**
+     * @param Video|null $video
+     *
+     * @return $this
+     */
+    public function setVideo(?Video $video): self
+    {
+        $this->video = $video;
 
         return $this;
     }

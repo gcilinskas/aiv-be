@@ -3,33 +3,38 @@
 namespace App\Entity;
 
 use App\Entity\Traits\TimeEntityTrait;
+use App\Entity\Traits\WithFilesEntityTrait;
 use App\Repository\TrackRepository;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TrackRepository::class)
  */
 class Track
 {
-    use TimeEntityTrait;
+    use TimeEntityTrait, WithFilesEntityTrait;
 
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups("api_track")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("api_track")
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("api_track")
      */
     private $artist;
 
@@ -39,15 +44,17 @@ class Track
     private $words;
 
     /**
-     * @ORM\OneToOne(targetEntity=File::class, mappedBy="track", cascade={"persist", "remove"})
+     * @var File[]|ArrayCollection
+     * @ORM\OneToMany(targetEntity=File::class, mappedBy="track", cascade={"persist"})
      */
-    private $file;
+    private $files;
 
     /**
      * Track constructor.
      */
     public function __construct()
     {
+        $this->files = new ArrayCollection();
         $this->words = new ArrayCollection();
         $this->updatedAt = new DateTime();
         $this->createdAt = new DateTime();
@@ -141,11 +148,23 @@ class Track
     }
 
     /**
-     * @return File|null
+     * @return File[]|ArrayCollection
      */
-    public function getFile(): ?File
+    public function getFiles()
     {
-        return $this->file;
+        return $this->files;
+    }
+
+    /**
+     * @param File[]|ArrayCollection $files
+     *
+     * @return Track
+     */
+    public function setFiles($files): Track
+    {
+        $this->files = $files;
+
+        return $this;
     }
 
     /**
@@ -153,17 +172,45 @@ class Track
      *
      * @return $this
      */
-    public function setFile(File $file): self
+    public function addFile(File $file): self
     {
-        // set the owning side of the relation if necessary
-        if ($file->getTrack() !== $this) {
+        if (!$this->files->contains($file)) {
+            $this->files[] = $file;
             $file->setTrack($this);
         }
-
-        $this->file = $file;
 
         return $this;
     }
 
+    /**
+     * @param File $file
+     *
+     * @return $this
+     */
+    public function removeFile(File $file): self
+    {
+        if ($this->files->removeElement($file)) {
+            if ($file->getTrack() === $this) {
+                $file->setTrack(null);
+            }
+        }
 
+        return $this;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return File|null
+     */
+    public function getFileByType(string $type): ?File
+    {
+        foreach ($this->getFiles() as $file) {
+            if ($file->getType() === $type) {
+                return $file;
+            }
+        }
+
+        return null;
+    }
 }
